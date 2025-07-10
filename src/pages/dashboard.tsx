@@ -28,13 +28,17 @@ export default function DashboardPage() {
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   // Fetch current user
-  const { data: user } = useQuery({
+  const { data: user } = useQuery<{ id: number; email: string }>({
     queryKey: ["/api/auth/me"],
     retry: false,
   });
 
   // Fetch current batch settings
-  const { data: currentSettings } = useQuery({
+  const { data: currentSettings } = useQuery<{
+    oldPatientsTarget?: number;
+    importSetupId?: number;
+    hourlyBatchCount?: number;
+  }>({
     queryKey: ["/api/batch-settings"],
     retry: false,
   });
