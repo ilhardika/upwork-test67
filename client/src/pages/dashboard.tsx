@@ -34,6 +34,7 @@ export default function DashboardPage() {
 
   const form = useForm<InsertBatchSettings>({
     resolver: zodResolver(batchSettingsSchema),
+    mode: "onChange", // Enable real-time validation
     defaultValues: {
       oldPatientsTarget: 0,
       importSetupId: 1,
@@ -137,7 +138,7 @@ export default function DashboardPage() {
                                   min="0"
                                   max="100"
                                   placeholder="0"
-                                  className="px-3 py-3 pr-8"
+                                  className={`px-3 py-3 pr-8 ${form.formState.errors.oldPatientsTarget ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
                                   onChange={(e) => {
                                     const value = e.target.value;
                                     if (value === "") {
@@ -152,7 +153,7 @@ export default function DashboardPage() {
                                 <span className="text-gray-500 sm:text-sm">%</span>
                               </div>
                             </div>
-                            <p className="text-xs text-gray-500">Enter a value between 0 and 100</p>
+                            <p className="text-xs text-gray-500">Masukkan nilai antara 0 dan 100</p>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -172,8 +173,8 @@ export default function DashboardPage() {
                                 {...field}
                                 type="number"
                                 min="1"
-                                placeholder="Enter setup ID"
-                                className="px-3 py-3"
+                                placeholder="Masukkan Setup ID"
+                                className={`px-3 py-3 ${form.formState.errors.importSetupId ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
                                 onChange={(e) => {
                                   const value = e.target.value;
                                   if (value === "") {
@@ -184,7 +185,7 @@ export default function DashboardPage() {
                                 }}
                               />
                             </FormControl>
-                            <p className="text-xs text-gray-500">Must be a positive integer greater than 0</p>
+                            <p className="text-xs text-gray-500">Harus berupa bilangan bulat positif lebih dari 0</p>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -206,7 +207,7 @@ export default function DashboardPage() {
                                 min="1"
                                 max="100"
                                 placeholder="60"
-                                className="px-3 py-3"
+                                className={`px-3 py-3 ${form.formState.errors.hourlyBatchCount ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
                                 onChange={(e) => {
                                   const value = e.target.value;
                                   if (value === "") {
@@ -217,7 +218,7 @@ export default function DashboardPage() {
                                 }}
                               />
                             </FormControl>
-                            <p className="text-xs text-gray-500">Enter a value between 1 and 100</p>
+                            <p className="text-xs text-gray-500">Masukkan nilai antara 1 dan 100</p>
                             <FormMessage />
                           </FormItem>
                         )}

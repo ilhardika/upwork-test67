@@ -30,9 +30,18 @@ export const loginSchema = z.object({
 });
 
 export const batchSettingsSchema = z.object({
-  oldPatientsTarget: z.coerce.number().min(0, "Must be at least 0").max(100, "Must be at most 100"),
-  importSetupId: z.coerce.number().int().min(1, "Must be a positive integer greater than 0"),
-  hourlyBatchCount: z.coerce.number().min(1, "Must be at least 1").max(100, "Must be at most 100"),
+  oldPatientsTarget: z.coerce.number({
+    required_error: "Persentase target pasien lama diperlukan",
+    invalid_type_error: "Harus berupa angka"
+  }).min(0, "Nilai minimal adalah 0").max(100, "Nilai maksimal adalah 100"),
+  importSetupId: z.coerce.number({
+    required_error: "Import Setup ID diperlukan",
+    invalid_type_error: "Harus berupa angka"
+  }).int("Harus berupa bilangan bulat").min(1, "Harus berupa bilangan bulat positif lebih dari 0"),
+  hourlyBatchCount: z.coerce.number({
+    required_error: "Jumlah batch per jam diperlukan", 
+    invalid_type_error: "Harus berupa angka"
+  }).min(1, "Nilai minimal adalah 1").max(100, "Nilai maksimal adalah 100"),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
