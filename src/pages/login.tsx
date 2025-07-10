@@ -7,10 +7,16 @@ import { CheckCircle, Loader2, AlertCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 import { loginSchema, type LoginRequest } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
@@ -54,14 +60,19 @@ export default function LoginPage() {
           <div className="mx-auto h-12 w-12 bg-primary rounded-lg flex items-center justify-center mb-6">
             <CheckCircle className="h-6 w-6 text-primary-foreground" />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900">Sign in to your account</h2>
-          <p className="mt-2 text-sm text-gray-600">Access your healthcare dashboard</p>
+          <h2 className="text-3xl font-bold text-gray-900">
+            Sign in to your account
+          </h2>
+          <p className="mt-2 text-sm text-gray-600">Access your dashboard</p>
         </div>
 
         <Card>
           <CardContent className="pt-6">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
                 <FormField
                   control={form.control}
                   name="email"
@@ -124,7 +135,8 @@ export default function LoginPage() {
 
                 <div className="text-center">
                   <p className="text-sm text-gray-600">
-                    Demo credentials: <span className="font-medium">demo@example.com</span> /{" "}
+                    Demo credentials:{" "}
+                    <span className="font-medium">demo@example.com</span> /{" "}
                     <span className="font-medium">password123</span>
                   </p>
                 </div>
