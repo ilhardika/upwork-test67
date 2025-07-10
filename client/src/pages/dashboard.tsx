@@ -138,7 +138,14 @@ export default function DashboardPage() {
                                   max="100"
                                   placeholder="0"
                                   className="px-3 py-3 pr-8"
-                                  onChange={(e) => field.onChange(Number(e.target.value))}
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (value === "") {
+                                      field.onChange("");
+                                    } else {
+                                      field.onChange(Number(value));
+                                    }
+                                  }}
                                 />
                               </FormControl>
                               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -167,7 +174,14 @@ export default function DashboardPage() {
                                 min="1"
                                 placeholder="Enter setup ID"
                                 className="px-3 py-3"
-                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  if (value === "") {
+                                    field.onChange("");
+                                  } else {
+                                    field.onChange(Number(value));
+                                  }
+                                }}
                               />
                             </FormControl>
                             <p className="text-xs text-gray-500">Must be a positive integer greater than 0</p>
@@ -193,7 +207,14 @@ export default function DashboardPage() {
                                 max="100"
                                 placeholder="60"
                                 className="px-3 py-3"
-                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  if (value === "") {
+                                    field.onChange("");
+                                  } else {
+                                    field.onChange(Number(value));
+                                  }
+                                }}
                               />
                             </FormControl>
                             <p className="text-xs text-gray-500">Enter a value between 1 and 100</p>

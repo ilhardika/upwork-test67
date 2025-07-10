@@ -88,7 +88,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Start batch endpoint
-  app.post("/api/batch/start", authenticateToken, async (req, res) => {
+  app.post("/api/batch/start", authenticateToken, async (req: any, res) => {
     try {
       // Add delay to simulate processing
       await new Promise(resolve => setTimeout(resolve, 2000));
