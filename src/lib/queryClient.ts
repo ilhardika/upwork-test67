@@ -1,37 +1,34 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { mockAuthService, mockBatchService } from "./mockApi";
 
-async function throwIfResNotOk(res: Response) {
-  if (!res.ok) {
-    const text = (await res.text()) || res.statusText;
-    throw new Error(`${res.status}: ${text}`);
-  }
-}
-
+// Mock API request function that routes to appropriate mock services
 export async function apiRequest(
   method: string,
   url: string,
-  data?: unknown | undefined,
-): Promise<Response> {
-  const token = localStorage.getItem('jwt_token');
-  const headers: Record<string, string> = {};
-  
-  if (data) {
-    headers["Content-Type"] = "application/json";
-  }
-  
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
+  data?: unknown | undefined
+): Promise<{ json: () => Promise<any> }> {
+  // Route to appropriate mock service based on URL
+  if (url === "/api/auth/login" && method === "POST") {
+    const result = await mockAuthService.login(data as any);
+    return { json: async () => result };
   }
 
-  const res = await fetch(url, {
-    method,
-    headers,
-    body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
-  });
+  if (url === "/api/auth/me" && method === "GET") {
+    const result = await mockAuthService.getCurrentUser();
+    return { json: async () => result };
+  }
 
-  await throwIfResNotOk(res);
-  return res;
+  if (url === "/api/batch-settings" && method === "GET") {
+    const result = await mockBatchService.getBatchSettings();
+    return { json: async () => result };
+  }
+
+  if (url === "/api/batch/start" && method === "POST") {
+    const result = await mockBatchService.startBatch(data as any);
+    return { json: async () => result };
+  }
+
+  throw new Error(`Mock API: Unhandled request ${method} ${url}`);
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
@@ -40,24 +37,21 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const token = localStorage.getItem('jwt_token');
-    const headers: Record<string, string> = {};
-    
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
+    const url = queryKey.join("/") as string;
+
+    try {
+      const response = await apiRequest("GET", url);
+      return await response.json();
+    } catch (error) {
+      if (
+        unauthorizedBehavior === "returnNull" &&
+        error instanceof Error &&
+        error.message.includes("No token found")
+      ) {
+        return null;
+      }
+      throw error;
     }
-
-    const res = await fetch(queryKey.join("/") as string, {
-      headers,
-      credentials: "include",
-    });
-
-    if (unauthorizedBehavior === "returnNull" && res.status === 401) {
-      return null;
-    }
-
-    await throwIfResNotOk(res);
-    return await res.json();
   };
 
 export const queryClient = new QueryClient({

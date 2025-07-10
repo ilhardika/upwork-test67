@@ -44,7 +44,7 @@ export default function DashboardPage() {
     mode: "onChange", // Enable real-time validation
     defaultValues: {
       oldPatientsTarget: 0,
-      importSetupId: 1,
+      importSetupId: undefined,
       hourlyBatchCount: 60,
     },
   });
@@ -54,7 +54,7 @@ export default function DashboardPage() {
     if (currentSettings) {
       form.reset({
         oldPatientsTarget: currentSettings.oldPatientsTarget || 0,
-        importSetupId: currentSettings.importSetupId || 1,
+        importSetupId: currentSettings.importSetupId,
         hourlyBatchCount: currentSettings.hourlyBatchCount || 60,
       });
     }
@@ -154,7 +154,11 @@ export default function DashboardPage() {
                                   min="0"
                                   max="100"
                                   placeholder="0"
-                                  className={`px-3 py-3 pr-8 ${form.formState.errors.oldPatientsTarget ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""}`}
+                                  className={`px-3 py-3 pr-8 ${
+                                    form.formState.errors.oldPatientsTarget
+                                      ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                                      : ""
+                                  }`}
                                   onChange={(e) => {
                                     const value = e.target.value;
                                     if (value === "") {
@@ -194,7 +198,11 @@ export default function DashboardPage() {
                                 type="number"
                                 min="1"
                                 placeholder="Enter setup ID"
-                                className={`px-3 py-3 ${form.formState.errors.importSetupId ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""}`}
+                                className={`px-3 py-3 ${
+                                  form.formState.errors.importSetupId
+                                    ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                                    : ""
+                                }`}
                                 onChange={(e) => {
                                   const value = e.target.value;
                                   if (value === "") {
@@ -229,7 +237,11 @@ export default function DashboardPage() {
                                 min="1"
                                 max="100"
                                 placeholder="60"
-                                className={`px-3 py-3 ${form.formState.errors.hourlyBatchCount ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""}`}
+                                className={`px-3 py-3 ${
+                                  form.formState.errors.hourlyBatchCount
+                                    ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                                    : ""
+                                }`}
                                 onChange={(e) => {
                                   const value = e.target.value;
                                   if (value === "") {
