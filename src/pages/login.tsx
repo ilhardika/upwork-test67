@@ -135,9 +135,9 @@ export default function LoginPage() {
 
                 <div className="text-center">
                   <p className="text-sm text-gray-600">
-                    Demo credentials:{" "}
-                    <span className="font-medium">demo@example.com</span> /{" "}
-                    <span className="font-medium">password123</span>
+                    Login credentials:{" "}
+                    <span className="font-medium">pvsavaliya07@gmail.com</span>{" "}
+                    / <span className="font-medium">pass123</span>
                   </p>
                 </div>
               </form>
