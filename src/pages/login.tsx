@@ -132,14 +132,6 @@ export default function LoginPage() {
                     "Sign in"
                   )}
                 </Button>
-
-                <div className="text-center">
-                  <p className="text-sm text-gray-600">
-                    Login credentials:{" "}
-                    <span className="font-medium">pvsavaliya07@gmail.com</span>{" "}
-                    / <span className="font-medium">pass123</span>
-                  </p>
-                </div>
               </form>
             </Form>
           </CardContent>

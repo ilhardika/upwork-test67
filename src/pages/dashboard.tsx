@@ -21,11 +21,13 @@ import {
 import { batchSettingsSchema, type InsertBatchSettings } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { auth } from "@/lib/auth";
+import { batchService } from "@/lib/batchService";
 
 export default function DashboardPage() {
   const [, setLocation] = useLocation();
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [authUrl, setAuthUrl] = useState<string>("");
 
   // Fetch current user
   const { data: user } = useQuery<{ id: number; email: string }>({
@@ -70,14 +72,30 @@ export default function DashboardPage() {
       const response = await apiRequest("POST", "/api/batch/start", data);
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       setErrorMessage("");
       setSuccessMessage("Batch started successfully");
-      setTimeout(() => setSuccessMessage(""), 5000);
+
+      // Get auth URL after successful batch start
+      try {
+        const authUrlResponse = await batchService.getAuthUrl();
+        setAuthUrl(authUrlResponse);
+        setSuccessMessage(
+          "Batch started successfully. Please connect your Office 365 calendar."
+        );
+      } catch (error) {
+        console.error("Failed to get auth URL:", error);
+        setSuccessMessage(
+          "Batch started successfully, but failed to get calendar auth URL."
+        );
+      }
+
+      setTimeout(() => setSuccessMessage(""), 10000);
     },
     onError: (error: Error) => {
       setSuccessMessage("");
       setErrorMessage(error.message);
+      setAuthUrl("");
     },
   });
 
@@ -89,6 +107,7 @@ export default function DashboardPage() {
   const onSubmit = (data: InsertBatchSettings) => {
     setSuccessMessage("");
     setErrorMessage("");
+    setAuthUrl("");
     startBatchMutation.mutate(data);
   };
 
@@ -274,6 +293,28 @@ export default function DashboardPage() {
                       <CheckCircle className="h-4 w-4 text-green-600" />
                       <AlertDescription className="text-green-700">
                         {successMessage}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                  {/* Auth URL Link */}
+                  {authUrl && (
+                    <Alert className="border-blue-200 bg-blue-50">
+                      <Info className="h-4 w-4 text-blue-600" />
+                      <AlertDescription className="text-blue-700">
+                        <div className="space-y-2">
+                          <p className="font-medium">
+                            Connect your Office 365 Calendar:
+                          </p>
+                          <a
+                            href={authUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                          >
+                            Connect Calendar
+                          </a>
+                        </div>
                       </AlertDescription>
                     </Alert>
                   )}
