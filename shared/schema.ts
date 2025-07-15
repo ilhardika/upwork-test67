@@ -31,21 +31,21 @@ export const loginSchema = z.object({
 });
 
 export const batchSettingsSchema = z.object({
-  oldPatientsTarget: z.coerce
+  new_call_schedule_percentage: z.coerce
     .number({
-      required_error: "Old patients target percentage is required",
+      required_error: "New call schedule percentage is required",
       invalid_type_error: "Must be a number",
     })
     .min(0, "Minimum value is 0")
     .max(100, "Maximum value is 100"),
-  importSetupId: z.coerce
+  imort_setup_id: z.coerce
     .number({
       required_error: "Import Setup ID is required",
       invalid_type_error: "Must be a number",
     })
     .int("Must be an integer")
     .min(1, "Must be a positive integer greater than 0"),
-  hourlyBatchCount: z.coerce
+  hourly_batch_count: z.coerce
     .number({
       required_error: "Hourly batch count is required",
       invalid_type_error: "Must be a number",

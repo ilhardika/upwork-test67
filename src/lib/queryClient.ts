@@ -1,34 +1,52 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
-import { mockAuthService, mockBatchService } from "./mockApi";
+import { auth } from "./auth";
+import { batchService } from "./batchService";
 
-// Mock API request function that routes to appropriate mock services
 export async function apiRequest(
   method: string,
   url: string,
   data?: unknown | undefined
-): Promise<{ json: () => Promise<any> }> {
-  // Route to appropriate mock service based on URL
-  if (url === "/api/auth/login" && method === "POST") {
-    const result = await mockAuthService.login(data as any);
-    return { json: async () => result };
-  }
-
-  if (url === "/api/auth/me" && method === "GET") {
-    const result = await mockAuthService.getCurrentUser();
-    return { json: async () => result };
-  }
-
-  if (url === "/api/batch-settings" && method === "GET") {
-    const result = await mockBatchService.getBatchSettings();
-    return { json: async () => result };
-  }
-
+): Promise<Response> {
+  // Handle special batch start endpoint
   if (url === "/api/batch/start" && method === "POST") {
-    const result = await mockBatchService.startBatch(data as any);
-    return { json: async () => result };
+    const result = await batchService.startBatch(data as any);
+    return {
+      ok: true,
+      json: async () => result.data,
+    } as Response;
   }
 
-  throw new Error(`Mock API: Unhandled request ${method} ${url}`);
+  // Handle login endpoint
+  if (url === "/api/auth/login" && method === "POST") {
+    const result = await auth.login(
+      (data as any).email,
+      (data as any).password
+    );
+    auth.setUserEmail((data as any).email);
+    return {
+      ok: true,
+      json: async () => result,
+    } as Response;
+  }
+
+  // Handle get current user
+  if (url === "/api/auth/me" && method === "GET") {
+    const result = await auth.getCurrentUser();
+    return {
+      ok: true,
+      json: async () => result,
+    } as Response;
+  }
+
+  // Handle batch settings - for now return empty since API doesn't have this endpoint
+  if (url === "/api/batch-settings" && method === "GET") {
+    return {
+      ok: true,
+      json: async () => ({}),
+    } as Response;
+  }
+
+  throw new Error(`Unhandled request ${method} ${url}`);
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";

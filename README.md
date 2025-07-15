@@ -1,6 +1,6 @@
 # Batch Processing Dashboard
 
-A modern React + TypeScript frontend application for managing batch processing operations with dummy data.
+A modern React + TypeScript frontend application for managing batch processing operations with real API integration.
 
 ## 🚀 Tech Stack
 
@@ -8,36 +8,40 @@ A modern React + TypeScript frontend application for managing batch processing o
 - **Styling**: Tailwind CSS, Radix UI Components
 - **Form Handling**: React Hook Form + Zod validation
 - **State Management**: TanStack Query
-- **Authentication**: Client-side with localStorage (mock)
-- **Data**: Mock/dummy data (no backend required)
+- **Authentication**: JWT with real API backend
+- **API**: Integrated with AI Call Agent Backend
 
 ## 🛠️ Development Setup
 
 ### Prerequisites
-- Node.js 18+ 
+
+- Node.js 18+
 - npm or yarn
 
 ### Installation
+
 ```bash
 npm install
 ```
 
 ### Development Mode
+
 ```bash
 npm run dev
 ```
+
 - Runs on: `http://localhost:3000`
 - Hot reload enabled
-- No backend server needed!
+- Connects to real API backend
 
 ### Demo Login Credentials
-- **Email**: `demo@example.com` | **Password**: `password123`
-- **Email**: `admin@example.com` | **Password**: `admin123`
-- **Email**: `user@example.com` | **Password**: `user123`
+
+- **Email**: `pvsavaliya07@gmail.com` | **Password**: `pass123`
 
 ## 🌐 Deploy to Vercel
 
 ### Option 1: Deploy via Vercel CLI
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -50,16 +54,19 @@ vercel --prod
 ```
 
 ### Option 2: Deploy via GitHub
+
 1. Push your code to GitHub
 2. Connect your GitHub repo to Vercel
 3. Vercel will auto-deploy on every push to main branch
 
 ### Build Command
+
 ```bash
 npm run build
 ```
 
 ## 📁 Project Structure
+
 ```
 ├── src/                    # React application source
 │   ├── components/         # Reusable UI components
@@ -77,18 +84,19 @@ npm run build
 
 ## ✨ Features
 
-- ✅ **Pure Frontend** - No backend dependencies
-- ✅ **Mock Authentication** - Client-side login simulation
-- ✅ **Dummy Data** - Pre-populated batch settings
+- ✅ **Real API Integration** - Connected to AI Call Agent Backend
+- ✅ **JWT Authentication** - Secure login with real credentials
+- ✅ **Batch Processing** - Start master batch operations
 - ✅ **Form Validation** - Real-time validation with Zod
 - ✅ **Responsive Design** - Mobile-friendly UI
-- ✅ **Loading States** - Realistic loading simulations
-- ✅ **Error Handling** - Proper error states
+- ✅ **Loading States** - Proper async handling
+- ✅ **Error Handling** - Comprehensive error management
 - ✅ **TypeScript** - Full type safety
-- ✅ **Easy Deployment** - Ready for Vercel/Netlify
+- ✅ **Easy Deployment** - Ready for Vercel
 
 ## 🎯 Perfect for:
+
 - **Prototyping** - Quick UI/UX testing
-- **Demos** - Showcasing frontend capabilities  
+- **Demos** - Showcasing frontend capabilities
 - **Portfolio** - Clean, professional project
 - **Learning** - Modern React patterns & best practices

@@ -35,9 +35,9 @@ export default function DashboardPage() {
 
   // Fetch current batch settings
   const { data: currentSettings } = useQuery<{
-    oldPatientsTarget?: number;
-    importSetupId?: number;
-    hourlyBatchCount?: number;
+    new_call_schedule_percentage?: number;
+    imort_setup_id?: number;
+    hourly_batch_count?: number;
   }>({
     queryKey: ["/api/batch-settings"],
     retry: false,
@@ -47,9 +47,9 @@ export default function DashboardPage() {
     resolver: zodResolver(batchSettingsSchema),
     mode: "onChange", // Enable real-time validation
     defaultValues: {
-      oldPatientsTarget: 0,
-      importSetupId: undefined,
-      hourlyBatchCount: 60,
+      new_call_schedule_percentage: 0,
+      imort_setup_id: undefined,
+      hourly_batch_count: 60,
     },
   });
 
@@ -57,9 +57,10 @@ export default function DashboardPage() {
   useEffect(() => {
     if (currentSettings) {
       form.reset({
-        oldPatientsTarget: currentSettings.oldPatientsTarget || 0,
-        importSetupId: currentSettings.importSetupId,
-        hourlyBatchCount: currentSettings.hourlyBatchCount || 60,
+        new_call_schedule_percentage:
+          currentSettings.new_call_schedule_percentage || 0,
+        imort_setup_id: currentSettings.imort_setup_id,
+        hourly_batch_count: currentSettings.hourly_batch_count || 60,
       });
     }
   }, [currentSettings, form]);
@@ -142,14 +143,14 @@ export default function DashboardPage() {
                   className="space-y-6"
                 >
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                    {/* Old Patients Target */}
+                    {/* New Call Schedule Percentage */}
                     <div className="sm:col-span-2">
                       <FormField
                         control={form.control}
-                        name="oldPatientsTarget"
+                        name="new_call_schedule_percentage"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>% of old patients to target</FormLabel>
+                            <FormLabel>% of new records to target</FormLabel>
                             <div className="relative">
                               <FormControl>
                                 <Input
@@ -159,7 +160,8 @@ export default function DashboardPage() {
                                   max="100"
                                   placeholder="0"
                                   className={`px-3 py-3 pr-8 ${
-                                    form.formState.errors.oldPatientsTarget
+                                    form.formState.errors
+                                      .new_call_schedule_percentage
                                       ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                                       : ""
                                   }`}
@@ -192,7 +194,7 @@ export default function DashboardPage() {
                     <div>
                       <FormField
                         control={form.control}
-                        name="importSetupId"
+                        name="imort_setup_id"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Import Setup Id</FormLabel>
@@ -203,7 +205,7 @@ export default function DashboardPage() {
                                 min="1"
                                 placeholder="Enter setup ID"
                                 className={`px-3 py-3 ${
-                                  form.formState.errors.importSetupId
+                                  form.formState.errors.imort_setup_id
                                     ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                                     : ""
                                 }`}
@@ -230,7 +232,7 @@ export default function DashboardPage() {
                     <div>
                       <FormField
                         control={form.control}
-                        name="hourlyBatchCount"
+                        name="hourly_batch_count"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Hourly batch count</FormLabel>
@@ -242,7 +244,7 @@ export default function DashboardPage() {
                                 max="100"
                                 placeholder="60"
                                 className={`px-3 py-3 ${
-                                  form.formState.errors.hourlyBatchCount
+                                  form.formState.errors.hourly_batch_count
                                     ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                                     : ""
                                 }`}
