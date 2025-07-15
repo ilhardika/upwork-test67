@@ -27,7 +27,8 @@ export default function DashboardPage() {
   const [, setLocation] = useLocation();
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [authUrl, setAuthUrl] = useState<string>("");
+  const [apiResponse, setApiResponse] = useState<any>(null);
+  const [errorDetails, setErrorDetails] = useState<any>(null);
 
   // Fetch current user
   const { data: user } = useQuery<{ id: number; email: string }>({
@@ -72,30 +73,32 @@ export default function DashboardPage() {
       const response = await apiRequest("POST", "/api/batch/start", data);
       return response.json();
     },
-    onSuccess: async () => {
+    onSuccess: async (responseData) => {
       setErrorMessage("");
-      setSuccessMessage("Batch started successfully");
+      setErrorDetails(null);
+      setSuccessMessage("Batch started successfully.");
 
-      // Get auth URL after successful batch start
-      try {
-        const authUrlResponse = await batchService.getAuthUrl();
-        setAuthUrl(authUrlResponse);
-        setSuccessMessage(
-          "Batch started successfully. Please connect your Office 365 calendar."
-        );
-      } catch (error) {
-        console.error("Failed to get auth URL:", error);
-        setSuccessMessage(
-          "Batch started successfully, but failed to get calendar auth URL."
-        );
-      }
+      // Store the API response for display
+      setApiResponse(responseData.data || responseData);
 
       setTimeout(() => setSuccessMessage(""), 10000);
     },
-    onError: (error: Error) => {
+    onError: (error: Error, variables) => {
       setSuccessMessage("");
+      setApiResponse(null);
       setErrorMessage(error.message);
-      setAuthUrl("");
+
+      // Try to extract error details from the error
+      try {
+        // If error has additional details, store them
+        setErrorDetails({
+          message: error.message,
+          timestamp: new Date().toISOString(),
+          request_data: variables,
+        });
+      } catch (e) {
+        setErrorDetails(null);
+      }
     },
   });
 
@@ -104,10 +107,21 @@ export default function DashboardPage() {
     setLocation("/login");
   };
 
+  const handleConnectCalendar = async () => {
+    try {
+      const authUrlResponse = await batchService.getAuthUrl();
+      window.open(authUrlResponse, "_blank");
+    } catch (error) {
+      console.error("Failed to get auth URL:", error);
+      setErrorMessage("Failed to get calendar auth URL. Please try again.");
+    }
+  };
+
   const onSubmit = (data: InsertBatchSettings) => {
     setSuccessMessage("");
     setErrorMessage("");
-    setAuthUrl("");
+    setApiResponse(null);
+    setErrorDetails(null);
     startBatchMutation.mutate(data);
   };
 
@@ -129,6 +143,12 @@ export default function DashboardPage() {
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-600">{user?.email}</span>
+              <button
+                onClick={handleConnectCalendar}
+                className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+              >
+                Connect Calendar
+              </button>
               <button
                 onClick={handleLogout}
                 className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
@@ -297,23 +317,18 @@ export default function DashboardPage() {
                     </Alert>
                   )}
 
-                  {/* Auth URL Link */}
-                  {authUrl && (
-                    <Alert className="border-blue-200 bg-blue-50">
-                      <Info className="h-4 w-4 text-blue-600" />
-                      <AlertDescription className="text-blue-700">
+                  {/* API Response Display */}
+                  {apiResponse && (
+                    <Alert className="border-gray-200 bg-gray-50">
+                      <Info className="h-4 w-4 text-gray-600" />
+                      <AlertDescription className="text-gray-700">
                         <div className="space-y-2">
-                          <p className="font-medium">
-                            Connect your Office 365 Calendar:
-                          </p>
-                          <a
-                            href={authUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-                          >
-                            Connect Calendar
-                          </a>
+                          <p className="font-medium">API Response:</p>
+                          <div className="bg-gray-100 rounded-md p-3 overflow-x-auto">
+                            <pre className="text-xs text-gray-800 whitespace-pre-wrap">
+                              {JSON.stringify(apiResponse, null, 2)}
+                            </pre>
+                          </div>
                         </div>
                       </AlertDescription>
                     </Alert>
@@ -323,6 +338,23 @@ export default function DashboardPage() {
                     <Alert variant="destructive">
                       <AlertCircle className="h-4 w-4" />
                       <AlertDescription>{errorMessage}</AlertDescription>
+                    </Alert>
+                  )}
+
+                  {/* Error Details Display */}
+                  {errorDetails && (
+                    <Alert className="border-red-200 bg-red-50">
+                      <AlertCircle className="h-4 w-4 text-red-600" />
+                      <AlertDescription className="text-red-700">
+                        <div className="space-y-2">
+                          <p className="font-medium">Error Details:</p>
+                          <div className="bg-red-100 rounded-md p-3 overflow-x-auto">
+                            <pre className="text-xs text-red-800 whitespace-pre-wrap">
+                              {JSON.stringify(errorDetails, null, 2)}
+                            </pre>
+                          </div>
+                        </div>
+                      </AlertDescription>
                     </Alert>
                   )}
 
