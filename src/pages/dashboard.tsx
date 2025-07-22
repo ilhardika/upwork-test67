@@ -39,7 +39,7 @@ export default function DashboardPage() {
   // Fetch current batch settings
   const { data: currentSettings } = useQuery<{
     new_call_schedule_percentage?: number;
-    imort_setup_id?: number;
+    import_setup_id?: number;
     hourly_batch_count?: number;
   }>({
     queryKey: ["/api/batch-settings"],
@@ -51,7 +51,7 @@ export default function DashboardPage() {
     mode: "onChange", // Enable real-time validation
     defaultValues: {
       new_call_schedule_percentage: 0,
-      imort_setup_id: undefined,
+      import_setup_id: undefined,
       hourly_batch_count: 60,
     },
   });
@@ -62,7 +62,7 @@ export default function DashboardPage() {
       form.reset({
         new_call_schedule_percentage:
           currentSettings.new_call_schedule_percentage || 0,
-        imort_setup_id: currentSettings.imort_setup_id,
+        import_setup_id: currentSettings.import_setup_id,
         hourly_batch_count: currentSettings.hourly_batch_count || 60,
       });
     }
@@ -233,7 +233,7 @@ export default function DashboardPage() {
                     <div>
                       <FormField
                         control={form.control}
-                        name="imort_setup_id"
+                        name="import_setup_id"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Import Setup Id</FormLabel>
@@ -244,7 +244,7 @@ export default function DashboardPage() {
                                 min="1"
                                 placeholder="Enter setup ID"
                                 className={`px-3 py-3 ${
-                                  form.formState.errors.imort_setup_id
+                                  form.formState.errors.import_setup_id
                                     ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                                     : ""
                                 }`}
