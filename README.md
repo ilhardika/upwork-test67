@@ -151,7 +151,7 @@ Content-Type: application/json
 
 {
   "new_call_schedule_percentage": 60,
-  "imort_setup_id": 3,
+  "import_setup_id": 3,
   "hourly_batch_count": 60
 }
 
