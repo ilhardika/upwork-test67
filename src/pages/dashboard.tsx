@@ -39,7 +39,7 @@ export default function DashboardPage() {
   // Fetch current batch settings
   const { data: currentSettings } = useQuery<{
     new_call_schedule_percentage?: number;
-    imort_setup_id?: number;
+    import_setup_id?: number;
     hourly_batch_count?: number;
   }>({
     queryKey: ["/api/batch-settings"],
@@ -51,7 +51,7 @@ export default function DashboardPage() {
     mode: "onChange", // Enable real-time validation
     defaultValues: {
       new_call_schedule_percentage: 0,
-      imort_setup_id: undefined,
+      import_setup_id: undefined,
       hourly_batch_count: 60,
     },
   });
@@ -62,7 +62,7 @@ export default function DashboardPage() {
       form.reset({
         new_call_schedule_percentage:
           currentSettings.new_call_schedule_percentage || 0,
-        imort_setup_id: currentSettings.imort_setup_id,
+        import_setup_id: currentSettings.import_setup_id,
         hourly_batch_count: currentSettings.hourly_batch_count || 60,
       });
     }
@@ -102,6 +102,38 @@ export default function DashboardPage() {
     },
   });
 
+  const stopBatchMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("POST", "/api/stop-master-batch", {});
+      return response.json();
+    },
+    onSuccess: async (responseData) => {
+      setErrorMessage("");
+      setErrorDetails(null);
+      setSuccessMessage("All batches stopped successfully.");
+
+      // Store the API response for display
+      setApiResponse(responseData.data || responseData);
+
+      setTimeout(() => setSuccessMessage(""), 10000);
+    },
+    onError: (error: Error) => {
+      setSuccessMessage("");
+      setApiResponse(null);
+      setErrorMessage(error.message);
+
+      // Try to extract error details from the error
+      try {
+        setErrorDetails({
+          message: error.message,
+          timestamp: new Date().toISOString(),
+        });
+      } catch (e) {
+        setErrorDetails(null);
+      }
+    },
+  });
+
   const handleLogout = () => {
     auth.removeToken();
     setLocation("/login");
@@ -123,6 +155,14 @@ export default function DashboardPage() {
     setApiResponse(null);
     setErrorDetails(null);
     startBatchMutation.mutate(data);
+  };
+
+  const handleStopBatches = () => {
+    setSuccessMessage("");
+    setErrorMessage("");
+    setApiResponse(null);
+    setErrorDetails(null);
+    stopBatchMutation.mutate();
   };
 
   return (
@@ -233,7 +273,7 @@ export default function DashboardPage() {
                     <div>
                       <FormField
                         control={form.control}
-                        name="imort_setup_id"
+                        name="import_setup_id"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Import Setup Id</FormLabel>
@@ -244,7 +284,7 @@ export default function DashboardPage() {
                                 min="1"
                                 placeholder="Enter setup ID"
                                 className={`px-3 py-3 ${
-                                  form.formState.errors.imort_setup_id
+                                  form.formState.errors.import_setup_id
                                     ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                                     : ""
                                 }`}
@@ -360,20 +400,45 @@ export default function DashboardPage() {
 
                   {/* Submit Button */}
                   <div className="pt-4 border-t border-gray-200">
-                    <Button
-                      type="submit"
-                      className="w-full sm:w-auto px-6 py-3"
-                      disabled={startBatchMutation.isPending}
-                    >
-                      {startBatchMutation.isPending ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Starting batch...
-                        </>
-                      ) : (
-                        "Start batch"
-                      )}
-                    </Button>
+                    <div className="flex flex-col justify-between sm:flex-row gap-3">
+                      <Button
+                        type="submit"
+                        className="w-full sm:w-auto px-6 py-3"
+                        disabled={
+                          startBatchMutation.isPending ||
+                          stopBatchMutation.isPending
+                        }
+                      >
+                        {startBatchMutation.isPending ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Starting batch...
+                          </>
+                        ) : (
+                          "Start batch"
+                        )}
+                      </Button>
+
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={handleStopBatches}
+                        className="w-full sm:w-auto px-6 py-3"
+                        disabled={
+                          startBatchMutation.isPending ||
+                          stopBatchMutation.isPending
+                        }
+                      >
+                        {stopBatchMutation.isPending ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Stopping batches...
+                          </>
+                        ) : (
+                          "Stop all batches"
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 </form>
               </Form>

@@ -48,6 +48,32 @@ export const batchService = {
     } else if (response.status === 500) {
       // Server error
       throw new Error(data.message || "Internal server error occurred");
+    } else if (response.status === 422) {
+      // Validation error - provide more detailed message
+      const errorMessage =
+        data.message || data.detail || "Validation error occurred";
+
+      // If there are field-specific errors, include them
+      if (data.errors || data.details) {
+        const fieldErrors = data.errors || data.details;
+        if (Array.isArray(fieldErrors)) {
+          const errorDetails = fieldErrors
+            .map((err) =>
+              typeof err === "string"
+                ? err
+                : `${err.field || "Field"}: ${err.message || err.error || err}`
+            )
+            .join(", ");
+          throw new Error(`${errorMessage}: ${errorDetails}`);
+        } else if (typeof fieldErrors === "object") {
+          const errorDetails = Object.entries(fieldErrors)
+            .map(([field, error]) => `${field}: ${error}`)
+            .join(", ");
+          throw new Error(`${errorMessage}: ${errorDetails}`);
+        }
+      }
+
+      throw new Error(errorMessage);
     } else {
       // Other error status codes
       throw new Error(
@@ -75,6 +101,35 @@ export const batchService = {
       return data.auth_url;
     } else {
       throw new Error("Failed to get auth URL");
+    }
+  },
+
+  async stopMasterBatch() {
+    const token = auth.getToken();
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    const response = await fetch(`${API_URL}/stop-master-batch`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      return {
+        status: response.status,
+        success: true,
+        data: data,
+      };
+    } else {
+      throw new Error(
+        data.message || `Request failed with status ${response.status}`
+      );
     }
   },
 };

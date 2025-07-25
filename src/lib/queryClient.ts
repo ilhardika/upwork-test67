@@ -16,6 +16,15 @@ export async function apiRequest(
     } as Response;
   }
 
+  // Handle stop master batch endpoint
+  if (url === "/api/stop-master-batch" && method === "POST") {
+    const result = await batchService.stopMasterBatch();
+    return {
+      ok: true,
+      json: async () => result.data,
+    } as Response;
+  }
+
   // Handle login endpoint
   if (url === "/api/auth/login" && method === "POST") {
     const result = await auth.login(

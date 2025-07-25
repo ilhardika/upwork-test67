@@ -38,7 +38,7 @@ export const batchSettingsSchema = z.object({
     })
     .min(0, "Minimum value is 0")
     .max(100, "Maximum value is 100"),
-  imort_setup_id: z.coerce
+  import_setup_id: z.coerce
     .number({
       required_error: "Import Setup ID is required",
       invalid_type_error: "Must be a number",
