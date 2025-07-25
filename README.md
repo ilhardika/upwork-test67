@@ -46,8 +46,8 @@ This application provides a clean, intuitive interface for managing batch proces
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/ilhardika/upwork-test67.git
-   cd upwork-test67
+   git clone https://github.com/ranmax123/paul-voice-ai-portal.git
+   cd paul-voice-ai-portal
    ```
 
 2. **Install dependencies**
@@ -151,7 +151,7 @@ Content-Type: application/json
 
 {
   "new_call_schedule_percentage": 60,
-  "imort_setup_id": 3,
+  "import_setup_id": 3,
   "hourly_batch_count": 60
 }
 
