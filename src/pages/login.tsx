@@ -43,7 +43,7 @@ export default function LoginPage() {
       auth.setToken(data.token);
       // Refetch user data so dashboard updates immediately
       import("@/lib/queryClient").then(({ queryClient }) => {
-        queryClient.invalidateQueries("/api/auth/me");
+        queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
         setLocation("/dashboard");
       });
     },
