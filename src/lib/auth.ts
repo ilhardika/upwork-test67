@@ -32,18 +32,24 @@ export const auth = {
   },
 
   async login(email: string, password: string): Promise<LoginResponse> {
-    const response = await fetch(`${API_URL}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
+    const response = await fetch(
+      "https://ai-call-agent-backend-ab55f1d0898d.herokuapp.com/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      }
+    );
 
     const data = await response.json();
 
-    if (response.ok) {
+    if (response.ok && data.token) {
       this.setToken(data.token);
+      if (data.user?.email) {
+        this.setUserEmail(data.user.email);
+      }
       return data;
     } else {
       throw new Error(data.message || "Login failed");

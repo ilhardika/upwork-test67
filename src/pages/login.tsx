@@ -41,7 +41,11 @@ export default function LoginPage() {
     },
     onSuccess: (data) => {
       auth.setToken(data.token);
-      setLocation("/dashboard");
+      // Refetch user data so dashboard updates immediately
+      import("@/lib/queryClient").then(({ queryClient }) => {
+        queryClient.invalidateQueries(["/api/auth/me"]);
+        setLocation("/dashboard");
+      });
     },
     onError: (error: Error) => {
       setError(error.message);
